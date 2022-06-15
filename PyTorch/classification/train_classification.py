@@ -17,6 +17,7 @@ import test_classification
 import dataloader_classification
 from test_classification import get_model
 import torch.autograd.profiler as profiler
+import logging 
 
 def select_device(device=''):
     if device.lower() == 'cuda':
@@ -30,7 +31,7 @@ def select_device(device=''):
     else:
         return torch.device('cpu')
 
-def train(dataloader, model, device, loss, learning_rate, momentum, weight_decay, trace, model_str, ci_train):
+def train(dataloader, model, device, loss, learning_rate, momentum, weight_decay, trace, model_str, logger, ci_train):
     size = len(dataloader.dataset)
 
     # Define optimizer
@@ -90,6 +91,7 @@ def train(dataloader, model, device, loss, learning_rate, momentum, weight_decay
         if (batch+1) % 100 == 0:
             batch_loss_cpu, current = batch_loss.to('cpu'), (batch+1) * len(X)
             print(f"loss: {batch_loss_cpu.item():>7f}  [{current:>5d}/{size:>5d}] in {time.time() - start:>5f}s")
+            logger.info(f"loss: {batch_loss_cpu.item():>7f}  [{current:>5d}/{size:>5d}] in {time.time() - start:>5f}s")
             start = time.time()
 
         if ci_train:
@@ -126,8 +128,14 @@ def main(path, batch_size, epochs, learning_rate,
 
     highest_accuracy = 0
 
+    logging.basicConfig(filename="training.log", 
+					format='%(asctime)s %(message)s', 
+					filemode='w')
+    logger=logging.getLogger()  
+
     for t in range(epochs):
         print(f"Epoch {t+1}\n-------------------------------")
+        logger.info(f"Epoch {t+1}\n-------------------------------")
 
         # Train
         train(training_dataloader,
@@ -139,6 +147,7 @@ def main(path, batch_size, epochs, learning_rate,
               weight_decay,
               trace,
               model_str,
+              logger,
               ci_train)
 
         if not trace and not ci_train:
@@ -153,6 +162,7 @@ def main(path, batch_size, epochs, learning_rate,
                                     False)
 
     print("Done! with highest_accuracy: ", highest_accuracy)
+    logger.info("Done! with highest_accuracy: ", highest_accuracy)
     
 
 if __name__ == "__main__":
