@@ -31,7 +31,7 @@ def select_device(device=''):
     else:
         return torch.device('cpu')
 
-def train(dataloader, model, device, loss, learning_rate, momentum, weight_decay, trace, model_str, logger, ci_train):
+def train(epoch, dataloader, model, device, loss, learning_rate, momentum, weight_decay, trace, model_str, logger, ci_train):
     size = len(dataloader.dataset)
 
     # Define optimizer
@@ -43,6 +43,7 @@ def train(dataloader, model, device, loss, learning_rate, momentum, weight_decay
         
     optimize_after_batches = 1
     start = time.time()
+    epoch_time_lapse = 0
     for batch, (X, y) in enumerate(dataloader):
         X = X.to(device)
         y = y.to(device)
@@ -90,6 +91,7 @@ def train(dataloader, model, device, loss, learning_rate, momentum, weight_decay
             
         if (batch+1) % 100 == 0:
             batch_loss_cpu, current = batch_loss.to('cpu'), (batch+1) * len(X)
+            epoch_time_lapse += time.time() - start
             print(f"loss: {batch_loss_cpu.item():>7f}  [{current:>5d}/{size:>5d}] in {time.time() - start:>5f}s")
             logger.info(f"loss: {batch_loss_cpu.item():>7f}  [{current:>5d}/{size:>5d}] in {time.time() - start:>5f}s")
             start = time.time()
@@ -97,6 +99,8 @@ def train(dataloader, model, device, loss, learning_rate, momentum, weight_decay
         if ci_train:
             print(f"train [{len(X):>5d}/{size:>5d}] in {time.time() - start:>5f}s")
             break
+    print(f"Epoch {epoch} took a total of {epoch_time_lapse}")
+    logger.info(f"Epoch {epoch} took a total of {epoch_time_lapse}")
 
 
 def main(path, batch_size, epochs, learning_rate,
@@ -131,14 +135,16 @@ def main(path, batch_size, epochs, learning_rate,
     logging.basicConfig(filename="training.log", 
 					format='%(asctime)s %(message)s', 
 					filemode='w')
-    logger=logging.getLogger()  
+    
+    logger=logging.getLogger()
+    logger.setLevel(logging.DEBUG)   
 
     for t in range(epochs):
         print(f"Epoch {t+1}\n-------------------------------")
         logger.info(f"Epoch {t+1}\n-------------------------------")
 
         # Train
-        train(training_dataloader,
+        train(t+1, training_dataloader,
               model,
               device,
               cross_entropy_loss,
@@ -162,7 +168,7 @@ def main(path, batch_size, epochs, learning_rate,
                                     False)
 
     print("Done! with highest_accuracy: ", highest_accuracy)
-    logger.info("Done! with highest_accuracy: ", highest_accuracy)
+    logger.info(f"Done! with highest_accuracy: {highest_accuracy}")
     
 
 if __name__ == "__main__":
