@@ -132,7 +132,7 @@ def main(path, batch_size, epochs, learning_rate,
 
     highest_accuracy = 0
 
-    logging.basicConfig(filename="training.log", 
+    logging.basicConfig(filename="C:/training.log", 
 					format='%(asctime)s %(message)s', 
 					filemode='w')
     
