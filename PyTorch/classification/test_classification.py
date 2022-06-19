@@ -15,6 +15,7 @@ import dataloader_classification
 import torch.autograd.profiler as profiler
 from PIL import Image
 from os.path import exists
+import logging 
 
 def get_checkpoint_folder(model_str, device):
     checkpoint_folder = str(os.path.join(pathlib.Path(__file__).parent.parent.resolve(),
@@ -22,7 +23,7 @@ def get_checkpoint_folder(model_str, device):
     os.makedirs(checkpoint_folder, exist_ok=True)
     return str(os.path.join(checkpoint_folder, 'checkpoint.pth'))
 
-def eval(dataloader, model_str, model, device, loss, highest_accuracy, save_model, trace):
+def eval(dataloader, model_str, model, device, loss, highest_accuracy, save_model, trace, logger):
     size = len(dataloader.dataset)
     num_batches = len(dataloader)
 
@@ -65,6 +66,7 @@ def eval(dataloader, model_str, model, device, loss, highest_accuracy, save_mode
                 torch.save(state_dict, checkpoint)
 
         print(f"Test Error: \n Accuracy: {(100*correct.item()):>0.1f}%, Avg loss: {test_loss.item():>8f} \n")
+        logger.info(f"Test Error: \n Accuracy: {(100*correct.item()):>0.1f}%, Avg loss: {test_loss.item():>8f} \n")
 
     return highest_accuracy
 

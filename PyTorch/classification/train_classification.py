@@ -165,7 +165,7 @@ def main(path, batch_size, epochs, learning_rate,
                                     cross_entropy_loss,
                                     highest_accuracy,
                                     save_model,
-                                    False)
+                                    False, logger)
 
     print("Done! with highest_accuracy: ", highest_accuracy)
     logger.info(f"Done! with highest_accuracy: {highest_accuracy}")
