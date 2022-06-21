@@ -19,7 +19,7 @@ from test_classification import get_model
 import torch.autograd.profiler as profiler
 import logging 
 
-seed = 123
+
 
 def select_device(device=''):
     if device.lower() == 'cuda':
@@ -140,7 +140,7 @@ def main(path, batch_size, epochs, learning_rate,
     
     logger=logging.getLogger()
     logger.setLevel(logging.DEBUG)
-    torch.manual_seed(seed)   
+       
 
     for t in range(epochs):
         print(f"Epoch {t+1}\n-------------------------------")
@@ -187,6 +187,9 @@ if __name__ == "__main__":
     parser.add_argument('--save_model', action='store_true', help='save model state_dict to file')
     parser.add_argument('--trace', type=bool, default=False, help='Trace performance.')
     args = parser.parse_args()
+
+    seed = 123
+    torch.manual_seed(seed)
 
     print (args)
     main(args.path, args.batch_size, args.epochs, args.learning_rate,
