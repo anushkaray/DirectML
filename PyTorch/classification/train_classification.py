@@ -19,6 +19,8 @@ from test_classification import get_model
 import torch.autograd.profiler as profiler
 import logging 
 
+seed = 123
+
 def select_device(device=''):
     if device.lower() == 'cuda':
         if not torch.cuda.is_available():
@@ -137,7 +139,8 @@ def main(path, batch_size, epochs, learning_rate,
 					filemode='w')
     
     logger=logging.getLogger()
-    logger.setLevel(logging.DEBUG)   
+    logger.setLevel(logging.DEBUG)
+    torch.manual_seed(seed)   
 
     for t in range(epochs):
         print(f"Epoch {t+1}\n-------------------------------")
