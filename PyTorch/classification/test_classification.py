@@ -15,7 +15,9 @@ import dataloader_classification
 import torch.autograd.profiler as profiler
 from PIL import Image
 from os.path import exists
-import logging 
+import logging
+import numpy as np
+import random 
 
 def get_checkpoint_folder(model_str, device):
     checkpoint_folder = str(os.path.join(pathlib.Path(__file__).parent.parent.resolve(),
@@ -72,6 +74,9 @@ def eval(dataloader, model_str, model, device, loss, highest_accuracy, save_mode
 
 
 def get_model(model_str, device):
+    torch.manual_seed(17)
+    np.random.seed(17)
+    random.seed(17)
     if (model_str == 'squeezenet1_1'):
         model = models.squeezenet1_1(num_classes=10).to(device)
     elif (model_str == 'resnet50'):

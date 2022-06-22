@@ -17,9 +17,10 @@ import test_classification
 import dataloader_classification
 from test_classification import get_model
 import torch.autograd.profiler as profiler
-import logging 
-
-
+import logging
+import numpy as np
+import random
+ 
 
 def select_device(device=''):
     if device.lower() == 'cuda':
@@ -34,8 +35,11 @@ def select_device(device=''):
         return torch.device('cpu')
 
 def train(epoch, dataloader, model, device, loss, learning_rate, momentum, weight_decay, trace, model_str, logger, ci_train):
+    torch.manual_seed(17)
+    np.random.seed(17)
+    random.seed(17)
     size = len(dataloader.dataset)
-
+    
     # Define optimizer
     optimizer = torch.optim.SGD(
         model.parameters(),
@@ -107,6 +111,10 @@ def train(epoch, dataloader, model, device, loss, learning_rate, momentum, weigh
 
 def main(path, batch_size, epochs, learning_rate,
          momentum, weight_decay, device, model_str, save_model, trace, ci_train=False):
+    
+    torch.manual_seed(17)
+    np.random.seed(17)
+    random.seed(17)
     if trace:
         if model_str == 'inception_v3':
             batch_size = 3
@@ -118,8 +126,7 @@ def main(path, batch_size, epochs, learning_rate,
 
     model = get_model(model_str, device)
     
-    seed = 123
-    torch.manual_seed(seed)
+
     # Load the dataset
     training_dataloader = dataloader_classification.create_training_dataloader(path, batch_size, input_size)
     testing_dataloader = dataloader_classification.create_testing_dataloader(path, batch_size, input_size)
