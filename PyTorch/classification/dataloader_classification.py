@@ -11,6 +11,9 @@ import time
 import os
 import pathlib
 
+
+
+
 def get_pytorch_root(path):
     return pathlib.Path(__file__).parent.parent.resolve()
 
@@ -34,6 +37,7 @@ def print_dataloader(dataloader, mode):
 
 
 def create_training_data_transform(input_size):
+    torch.manual_seed(123)
     return transforms.Compose([transforms.RandomResizedCrop(input_size),
                                           transforms.RandomHorizontalFlip(),
                                           transforms.ToTensor(),
@@ -51,6 +55,7 @@ def create_training_dataloader(path, batch_size, input_size=224):
 
 
 def create_testing_data_transform(input_size):
+    torch.manual_seed(123)
     return transforms.Compose([
         transforms.Resize(256),
         transforms.CenterCrop(input_size),

@@ -117,7 +117,9 @@ def main(path, batch_size, epochs, learning_rate,
     input_size = 299 if model_str == 'inception_v3' else 224
 
     model = get_model(model_str, device)
-
+    
+    seed = 123
+    torch.manual_seed(seed)
     # Load the dataset
     training_dataloader = dataloader_classification.create_training_dataloader(path, batch_size, input_size)
     testing_dataloader = dataloader_classification.create_testing_dataloader(path, batch_size, input_size)
@@ -188,8 +190,6 @@ if __name__ == "__main__":
     parser.add_argument('--trace', type=bool, default=False, help='Trace performance.')
     args = parser.parse_args()
 
-    seed = 123
-    torch.manual_seed(seed)
 
     print (args)
     main(args.path, args.batch_size, args.epochs, args.learning_rate,
