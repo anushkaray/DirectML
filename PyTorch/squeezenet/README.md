@@ -103,6 +103,18 @@ You can save the model for testing by passing in the --save_model flag. This wil
 python pytorch\resnet50\train.py --save_model
 ```
 
+## Plotting Logs
+
+Logs will be generated in the "logs" folder. If you would like to see a visual comparison of the performance of DML vs NVIDIA, run squeezenet_plot.py.
+
+An example command is: 
+
+```
+python squeezenet_plot.py --nvidia-file <path_to_nvidia_log> --dml-file <path_to_dml_log> --plot-title "Cumulative Cost Per Epoch" --plot-type 'cost' --x-label "Epoch" --y-label "Dollars"
+```
+
+The current --plot-type options include "cost", "accuracy", and "compute time".
+
 ## Testing
 
 Once the model is trained and saved we can now test the model using the following steps. The test script will use the latest trained model from the checkpoints folder.
